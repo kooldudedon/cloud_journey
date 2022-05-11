@@ -1,0 +1,91 @@
+*setting firewall perm*
+sudo firewall-cmd
+sudo firewall-cmd --add-service=
+sudo firewall-cmd --list-all
+sudo firewall-cmd --remove-service=
+
+*setting up trusted zone8
+sudo firewall-cmd --add-source=[ip address/cidr] --zone=trusted
+sudo firewall-cmd --add-source=[ip address/cidr] --zone=trusted --permanent
+
+*setting permanent changes*
+sudo firewall-cmd --runtime-to-permanent
+*or use both of these*
+sudo firewall-cmd --add-port=12345/tcp
+sudo firewall-cmd --add-port=12345/tcp --permanent
+
+*setting static routes*
+sudo ip route add 192.168.0.0/24 via 10.0.0.100
+
+*deleting route*
+sudo ip route del 192.168.0.0/24
+
+*setting default route*
+sudo ip route add default via 10.0.0.100
+
+*setting ip add to an interface*
+sudo ip a add 10.0.0.50/24 dev eth1
+
+*setting permanent routes*
+nmcli connection show **find connection NAME to use in next step**
+sudo nmcli connection modify [connection name listed in nmcli connection show step] +ipv4.routes "192.168.0.0/24 10.0.0.100"
+sudo nmcli device reapply [connection name listed in nmcli connection show step]
+ip route show
+
+*removing permanent route*
+sudo nmcli connection modify [connection name listed in nmcli connection show step] -ipv4.routes "192.168.0.0/24 10.0.0.100"
+sudo nmcli device reapply [connection name listed in nmcli connection show step]
+
+*INSTALL BIND FOR DNS SERVICES*
+sudo dnf install bind bind-utils
+
+*CHECK SERVERS CURRENT IP ADDRESS*
+ip a
+
+*EDIT BIND CONFIGURATION*
+sudo vim /etc/named.conf
+
+*START BIND*
+sudo systemctl start named.service
+sudo systemctl enable named.service
+
+*ALLOW EXTERNAL CONNECTION VIA FIREWALL*
+sudo firewall-cmd --add-service=dns
+sudo firewall-cmd --add-service=dns --permanent
+
+*CHECK QUERY TIME TO SEE IF BIND IS WORKING*
+dig @127.0.0.1 google.com  
+dig @127.0.0.1 google.com
+
+**
+sudo vi /etc/named.conf
+zone "example.com" IN {
+		type master;
+		file "example.com.zone";
+};
+
+sudo ls /var/named/
+sudo cp  --perserve=ownership /var/named/named.localhost /var/named/example.com.zon
+
+sudo vi /var/named/example.com.zone
+
+*VIEW ENVIRONMENT*
+printenv
+OR 
+env
+
+*SETTING ENVIRONMENT VARIABLES*
+sudo vim /etc/environment
+
+*SETTING PROFILE VARIABLES*
+sudo vim /etc/profile.d/
+
+*CREATING TEMPLATE USER ENVIRONMENT*
+sudo vim /etc/skel/README   {{add text into the file}}
+
+*ADD ENVIRONMENT VARIABLE for USERS*
+sudo vim /home/usr/.bashrc  
+
+
+{{add PATH such as PATH="$HOME/.local/bin:$HOME/bin:/opt/bin:$PATH"
+
